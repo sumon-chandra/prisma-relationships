@@ -7,21 +7,19 @@ import { clean } from "./helpers.ts/clean";
  * A user has one profile, a profile belongs to one user
  */
 async function createUserWithProfile() {
-  await clean();
+  await clean()
   // create a user
   const user = await prisma.user.create({
-    data: {},
-  });
-
+    data: {}
+  })
   // create a profile
   const profile = await prisma.profile.create({
     data: {
       name: faker.name.firstName(),
-      userId: user.id,
-    },
-  });
-
-  const userOne = await prisma.user.findUnique({
+      userId: user.id
+    }
+  })
+  const firstUser = await prisma.user.findUnique({
     where: {
       id: user.id,
     },
@@ -29,33 +27,34 @@ async function createUserWithProfile() {
       profile: {
         select: {
           id: true,
-          name: true,
-        },
-      },
-    },
-  });
-
-  // 2. create a user with a profile
-  const userTwo = await prisma.user.create({
+          name: true
+        }
+      }
+    }
+  })
+  // create a user with a profile
+  const secUser = await prisma.user.create({
     data: {
       profile: {
         create: {
           name: faker.name.firstName(),
-        },
-      },
+        }
+      }
     },
     include: {
       profile: {
         select: {
           id: true,
-          name: true,
-        },
-      },
-    },
-  });
+          name: true
+        }
+      }
+    }
+  })
 
-  return { userOne, userTwo };
+  return { firstUser, secUser }
 }
 
-console.log("one-to-one");
-console.log(await createUserWithProfile());
+const userWithProfile = await createUserWithProfile()
+console.log("One-to-one");
+console.log(userWithProfile);
+
