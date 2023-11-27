@@ -44,7 +44,10 @@ model Order {
 model Category {
   id String @id @default(cuid())
 
-  name String
+  name     String
+  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  parentId String?
+  children Category[] @relation("CategoryToCategory")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
